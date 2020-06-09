@@ -6,6 +6,14 @@ var CHECKOUT = ['12:00', '13:00', '14:00'];
 var TYPE_OF_HOUSING = ['palace', 'flat', 'house', 'bungalo'];
 var OFFSET_X = 25;
 var OFFSET_Y = 70;
+var ROOMS_MAX = 100;
+var ROOMS_MIN = 100;
+var GUESTS_MAX = 3;
+var GUESTS_MIN = 3;
+var PRICE_MAX = 1000000;
+var PRICE_MIN = 1000;
+var LIMIT_Y_MAX = 630;
+var LIMIT_Y_MIN = 130;
 var map = document.querySelector('.map');
 var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -54,15 +62,15 @@ var createAds = function () {
       },
       'location': {
         'x': createRandomNumber(0, widthMapPins),
-        'y': createRandomNumber(130, 630)
+        'y': createRandomNumber(LIMIT_Y_MIN, LIMIT_Y_MAX)
       },
       'offer': {
         'title': 'заголовок для ' + (i + 1) + '-ого объявления',
         'address': 'адрес проживания',
-        'price': createRandomNumber(1000, 1000000),
+        'price': createRandomNumber(PRICE_MIN, PRICE_MAX),
         'type': getRandomElement(TYPE_OF_HOUSING),
-        'rooms': createRandomNumber(1, 4),
-        'guests': createRandomNumber(1, 15),
+        'rooms': createRandomNumber(ROOMS_MIN, ROOMS_MAX),
+        'guests': createRandomNumber(GUESTS_MIN, GUESTS_MAX),
         'checkin': getRandomElement(CHECKIN),
         'checkout': getRandomElement(CHECKOUT),
         'features': features,
@@ -115,33 +123,19 @@ var createCard = function (ad) {
   if (ad.offer.features.length === 0) {
     featuresOfLodging.style = 'display: none';
   } else {
-    var featuresTranslate = [];
-    for (var l = 0; l < ad.offer.features.length; l++) {
-      if (ad.offer.features[l] === 'dishwasher') {
-        featuresTranslate[l] = 'посудомоечная машина';
-      } else if (ad.offer.features[l] === 'wifi') {
-        featuresTranslate[l] = 'Wi-Fi';
-      } else if (ad.offer.features[l] === 'parking') {
-        featuresTranslate[l] = 'парковка';
-      } else if (ad.offer.features[l] === 'washer') {
-        featuresTranslate[l] = 'стиральная машина';
-      } else if (ad.offer.features[l] === 'elevator') {
-        featuresTranslate[l] = 'лифт';
-      } else if (ad.offer.features[l] === 'conditioner') {
-        featuresTranslate[l] = 'кондиционер';
+    for (var j = 0; j < FEATURES.length; j++) {
+      if (!ad.offer.features.includes(FEATURES[j])) {
+        var removeFeture = featuresOfLodging.querySelector('.popup__feature--' + FEATURES[j]);
+        removeFeture.remove();
       }
     }
-    for (var k = 0; k < featuresTranslate.length - 1; k++) {
-      featuresOfLodging.textContent += featuresTranslate[k] + ', ';
-    }
-    featuresOfLodging.textContent += featuresTranslate[featuresTranslate.length - 1];
   }
   descriptionOfLodging.textContent = ad.offer.description;
   photoOfLodging.src = ad.offer.photos[0];
   if (ad.offer.photos.length > 1) {
-    for (var j = 1; j < ad.offer.photos.length; j++) {
+    for (var k = 0; k < ad.offer.photos.length; ++k) {
       var nthPhotoOfLodging = photoOfLodging.cloneNode(true);
-      nthPhotoOfLodging.src = ad.offer.photos[j];
+      nthPhotoOfLodging.src = ad.offer.photos[k];
       photosOfLodging.appendChild(nthPhotoOfLodging);
     }
   }
