@@ -133,7 +133,7 @@ var createCard = function (ad) {
   descriptionOfLodging.textContent = ad.offer.description;
   photoOfLodging.src = ad.offer.photos[0];
   if (ad.offer.photos.length > 1) {
-    for (var k = 0; k < ad.offer.photos.length; ++k) {
+    for (var k = 0; k < ad.offer.photos.length; k++) {
       var nthPhotoOfLodging = photoOfLodging.cloneNode(true);
       nthPhotoOfLodging.src = ad.offer.photos[k];
       photosOfLodging.appendChild(nthPhotoOfLodging);
