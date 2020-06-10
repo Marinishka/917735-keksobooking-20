@@ -74,8 +74,6 @@ map.classList.remove('map--faded');
 
 var adsList = createAds();
 
-console.log(adsList);
-
 for (var i = 0; i < adsList.length; i++) {
   var pinOnMap = pinTemplate.cloneNode(true);
   pinOnMap.style.left = (adsList[i].location.x - OFFSET_X) + 'px';
