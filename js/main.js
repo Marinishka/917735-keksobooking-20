@@ -227,7 +227,7 @@ var createCard = function (ad) {
   }
   usersAvatar.src = ad.author.avatar;
 
-  closeButton.addEventListener('mousedown', function (evt) {
+  closeButton.addEventListener('mousedown', function () {
     map.removeChild(cardOfAd);
     document.removeEventListener('keydown', closeEscapePress);
   });
