@@ -228,9 +228,7 @@ var createCard = function (ad) {
   usersAvatar.src = ad.author.avatar;
 
   closeButton.addEventListener('mousedown', function (evt) {
-    if (evt.button === 0) {
-      map.removeChild(cardOfAd);
-    }
+    map.removeChild(cardOfAd);
     document.removeEventListener('keydown', closeEscapePress);
   });
   closeButton.addEventListener('keydown', function (evt) {
@@ -245,38 +243,44 @@ var createCard = function (ad) {
 
 var onPinMousePress = function (evt) {
   if (evt.button === 0) {
-    activationStatus();
+    activateStatus();
   }
 };
 
 var onPinEnterPress = function (evt) {
   if (evt.key === 'Enter') {
-    activationStatus();
+    activateStatus();
   }
 };
 
-var activationStatus = function () {
-  enableElements(formFieldsets);
-  enableElements(mapFiltersElements);
-  adForm.classList.remove('ad-form--disabled');
-  map.classList.remove('map--faded');
+var createPins = function () {
   var adsList = createAds();
   var pinListener = function (evt) {
     var mapCard = map.querySelector('.map__card');
     if (mapCard) {
       map.removeChild(mapCard);
     }
-    var numberOfAd = '';
+    var selectedAd = {};
     if (evt.target.tagName === 'IMG') {
-      numberOfAd = adsList[evt.toElement.parentElement.dataset.numberOfAd];
+      selectedAd = adsList[evt.toElement.parentElement.dataset.numberOfAd];
     }
     if (evt.target.className === 'map__pin') {
-      numberOfAd = adsList[evt.target.dataset.numberOfAd];
+      selectedAd = adsList[evt.target.dataset.numberOfAd];
     }
-    map.insertBefore(createCard(numberOfAd), mapFiltersContainer);
+    map.insertBefore(createCard(selectedAd), mapFiltersContainer);
   };
   for (var i = 0; i < adsList.length; i++) {
     var pinOnMap = pinTemplate.cloneNode(true);
+    pinOnMap.addEventListener('mousedown', function (evt) {
+      if (evt.button === 0) {
+        pinListener(evt);
+      }
+    });
+    pinOnMap.addEventListener('keydown', function (evt) {
+      if (evt.key === 'Enter') {
+        pinListener(evt);
+      }
+    });
     pinOnMap.style.left = (adsList[i].location.x - Offset.X) + 'px';
     pinOnMap.style.top = (adsList[i].location.y - Offset.Y) + 'px';
     pinOnMap.setAttribute('data-number-of-ad', i);
@@ -286,25 +290,17 @@ var activationStatus = function () {
     fragment.appendChild(pinOnMap);
   }
   mapPins.appendChild(fragment);
+};
+
+var activateStatus = function () {
+  enableElements(formFieldsets);
+  enableElements(mapFiltersElements);
+  adForm.classList.remove('ad-form--disabled');
+  map.classList.remove('map--faded');
+  createPins();
   formAddress.value = getAddress(mapPinMain);
   mapPinMain.removeEventListener('keydown', onPinEnterPress);
   mapPinMain.removeEventListener('mousedown', onPinMousePress);
-  var pins = mapPins.querySelectorAll('.map__pin');
-  pins.forEach(function (btn) {
-    if (btn.className.includes('map__pin--main')) {
-      return;
-    }
-    btn.addEventListener('mousedown', function (evt) {
-      if (evt.button === 0) {
-        pinListener(evt);
-      }
-    });
-    btn.addEventListener('keydown', function (evt) {
-      if (evt.key === 'Enter') {
-        pinListener(evt);
-      }
-    });
-  });
 };
 
 disableElements(formFieldsets);
