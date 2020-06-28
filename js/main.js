@@ -59,13 +59,13 @@ var getRandomElement = function (someArray) {
   return someArray[createRandomNumber(0, someArray.length - 1)];
 };
 
-var getDisabledElements = function (arr) {
+var disableElements = function (arr) {
   for (var i = 0; i < arr.length; i++) {
     arr[i].setAttribute('disabled', 'disabled');
   }
 };
 
-var getNotDisabledElements = function (arr) {
+var enableElements = function (arr) {
   for (var i = 0; i < arr.length; i++) {
     arr[i].removeAttribute('disabled');
   }
@@ -163,6 +163,14 @@ var getCapacityOffer = function (rooms, guests) {
   return capacityText;
 };
 
+var closeEscapePress = function (evt) {
+  var activeAardOfAd = map.querySelector('.map__card');
+  if (evt.key === 'Escape') {
+    map.removeChild(activeAardOfAd);
+    document.removeEventListener('keydown', closeEscapePress);
+  }
+};
+
 var createCard = function (ad) {
   var cardOfAd = cardTemplate.cloneNode(true);
   var titleOfAd = cardOfAd.querySelector('.popup__title');
@@ -176,6 +184,7 @@ var createCard = function (ad) {
   var photosOfLodging = cardOfAd.querySelector('.popup__photos');
   var photoOfLodging = cardOfAd.querySelector('.popup__photo');
   var usersAvatar = cardOfAd.querySelector('.popup__avatar');
+  var closeButton = cardOfAd.querySelector('.popup__close');
   titleOfAd.textContent = ad.offer.title;
   addressOfLodging.textContent = ad.offer.address;
   priceOfLodging.textContent = ad.offer.price + '₽/ночь';
@@ -217,46 +226,82 @@ var createCard = function (ad) {
     }
   }
   usersAvatar.src = ad.author.avatar;
+
+  closeButton.addEventListener('mousedown', function () {
+    map.removeChild(cardOfAd);
+    document.removeEventListener('keydown', closeEscapePress);
+  });
+  closeButton.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Enter') {
+      map.removeChild(cardOfAd);
+    }
+    document.removeEventListener('keydown', closeEscapePress);
+  });
+  document.addEventListener('keydown', closeEscapePress);
   return cardOfAd;
 };
 
 var onPinMousePress = function (evt) {
   if (evt.button === 0) {
-    activationStatus();
+    activateStatus();
   }
 };
 
 var onPinEnterPress = function (evt) {
   if (evt.key === 'Enter') {
-    activationStatus();
+    activateStatus();
   }
 };
 
-var activationStatus = function () {
-  getNotDisabledElements(formFieldsets);
-  getNotDisabledElements(mapFiltersElements);
-  adForm.classList.remove('ad-form--disabled');
-  map.classList.remove('map--faded');
+var createPins = function () {
   var adsList = createAds();
-
+  var pinListener = function (element, selectedAd) {
+    var changeCard = function (card) {
+      if (card) {
+        map.removeChild(card);
+      }
+      map.insertBefore(createCard(selectedAd), mapFiltersContainer);
+    };
+    element.addEventListener('mousedown', function (evt) {
+      var mapCard = map.querySelector('.map__card');
+      if (evt.button === 0) {
+        changeCard(mapCard);
+      }
+    });
+    element.addEventListener('keydown', function (evt) {
+      var mapCard = map.querySelector('.map__card');
+      if (evt.key === 'Enter') {
+        changeCard(mapCard);
+      }
+    });
+  };
   for (var i = 0; i < adsList.length; i++) {
     var pinOnMap = pinTemplate.cloneNode(true);
+    pinListener(pinOnMap, adsList[i]);
     pinOnMap.style.left = (adsList[i].location.x - Offset.X) + 'px';
     pinOnMap.style.top = (adsList[i].location.y - Offset.Y) + 'px';
+    pinOnMap.setAttribute('data-number-of-ad', i);
     var imageOfPin = pinOnMap.querySelector('img');
     imageOfPin.src = adsList[i].author.avatar;
     imageOfPin.alt = adsList[i].offer.title;
     fragment.appendChild(pinOnMap);
   }
   mapPins.appendChild(fragment);
-  map.insertBefore(createCard(adsList[0]), mapFiltersContainer);
+};
+
+var activateStatus = function () {
+  enableElements(formFieldsets);
+  enableElements(mapFiltersElements);
+  adForm.classList.remove('ad-form--disabled');
+  map.classList.remove('map--faded');
+  createPins();
   formAddress.value = getAddress(mapPinMain);
   mapPinMain.removeEventListener('keydown', onPinEnterPress);
   mapPinMain.removeEventListener('mousedown', onPinMousePress);
 };
 
-getDisabledElements(formFieldsets);
-getDisabledElements(mapFiltersElements);
+disableElements(formFieldsets);
+disableElements(mapFiltersElements);
 
 getAddress(mapPinMain);
 
