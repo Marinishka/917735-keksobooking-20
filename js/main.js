@@ -255,32 +255,29 @@ var onPinEnterPress = function (evt) {
 
 var createPins = function () {
   var adsList = createAds();
-  var pinListener = function (evt) {
-    var mapCard = map.querySelector('.map__card');
-    if (mapCard) {
-      map.removeChild(mapCard);
-    }
-    var selectedAd = {};
-    if (evt.target.tagName === 'IMG') {
-      selectedAd = adsList[evt.toElement.parentElement.dataset.numberOfAd];
-    }
-    if (evt.target.className === 'map__pin') {
-      selectedAd = adsList[evt.target.dataset.numberOfAd];
-    }
-    map.insertBefore(createCard(selectedAd), mapFiltersContainer);
+  var pinListener = function (element, selectedAd) {
+    var changeCard = function (card) {
+      if (card) {
+        map.removeChild(card);
+      }
+      map.insertBefore(createCard(selectedAd), mapFiltersContainer);
+    };
+    element.addEventListener('mousedown', function (evt) {
+      var mapCard = map.querySelector('.map__card');
+      if (evt.button === 0) {
+        changeCard(mapCard);
+      }
+    });
+    element.addEventListener('keydown', function (evt) {
+      var mapCard = map.querySelector('.map__card');
+      if (evt.key === 'Enter') {
+        changeCard(mapCard);
+      }
+    });
   };
   for (var i = 0; i < adsList.length; i++) {
     var pinOnMap = pinTemplate.cloneNode(true);
-    pinOnMap.addEventListener('mousedown', function (evt) {
-      if (evt.button === 0) {
-        pinListener(evt);
-      }
-    });
-    pinOnMap.addEventListener('keydown', function (evt) {
-      if (evt.key === 'Enter') {
-        pinListener(evt);
-      }
-    });
+    pinListener(pinOnMap, adsList[i]);
     pinOnMap.style.left = (adsList[i].location.x - Offset.X) + 'px';
     pinOnMap.style.top = (adsList[i].location.y - Offset.Y) + 'px';
     pinOnMap.setAttribute('data-number-of-ad', i);
