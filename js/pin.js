@@ -32,17 +32,16 @@ window.pin = (function () {
     });
   };
   return {
-    createPins: function () {
-      var adsList = window.data.createAds();
-      for (var i = 0; i < adsList.length; i++) {
+    createPins: function (ads) {
+      for (var i = 0; i < ads.length; i++) {
         var pinOnMap = pinTemplate.cloneNode(true);
-        addPinListeners(pinOnMap, adsList[i]);
-        pinOnMap.style.left = (adsList[i].location.x - Offset.X) + 'px';
-        pinOnMap.style.top = (adsList[i].location.y - Offset.Y) + 'px';
+        addPinListeners(pinOnMap, ads[i]);
+        pinOnMap.style.left = (ads[i].location.x - Offset.X) + 'px';
+        pinOnMap.style.top = (ads[i].location.y - Offset.Y) + 'px';
         pinOnMap.setAttribute('data-number-of-ad', i);
         var imageOfPin = pinOnMap.querySelector('img');
-        imageOfPin.src = adsList[i].author.avatar;
-        imageOfPin.alt = adsList[i].offer.title;
+        imageOfPin.src = ads[i].author.avatar;
+        imageOfPin.alt = ads[i].offer.title;
         fragment.appendChild(pinOnMap);
       }
       mapPins.appendChild(fragment);

@@ -46,6 +46,7 @@ window.data = (function () {
   };
 
   return {
+    LimitY: LimitY,
     FEATURES: FEATURES,
     createAds: function () {
       var adsList = [];
