@@ -5,7 +5,6 @@ window.card = (function () {
   var map = document.querySelector('.map');
 
   var getCapacityOffer = function (rooms, guests) {
-    var capacityText = '';
     var roomsText = '';
     var guestsText = '';
     if (rooms === 100) {
@@ -22,8 +21,7 @@ window.card = (function () {
     } else {
       guestsText = guests + ' гостей.';
     }
-    capacityText = roomsText + guestsText;
-    return capacityText;
+    return roomsText + guestsText;
   };
 
   return {
@@ -87,7 +85,9 @@ window.card = (function () {
       var closeEscapePress = function (evt) {
         var activeCardOfAd = map.querySelector('.map__card');
         if (evt.key === 'Escape') {
-          map.removeChild(activeCardOfAd);
+          if (activeCardOfAd) {
+            map.removeChild(activeCardOfAd);
+          }
           document.removeEventListener('keydown', closeEscapePress);
         }
       };

@@ -5,9 +5,11 @@ window.form = (function () {
     MAX: 100,
     MIN: 30
   };
-  var MSG_ERR_CLOSELY = 'Гостям будет тесно. Для каждого гостя требуется своя комната.';
-  var MSG_ERR_100ROOMS = 'Для 100 комнат нужно выбрать вариант не для гостей.';
-  var MSG_ERR_NO_GUESTS = 'Для данного варианта необходимо выбрать 100 комнат.';
+  var MsgErr = {
+    CLOSELY: 'Гостям будет тесно. Для каждого гостя требуется своя комната.',
+    ROOMS100: 'Для 100 комнат нужно выбрать вариант не для гостей.',
+    NO_GUESTS: 'Для данного варианта необходимо выбрать 100 комнат.'
+  };
   var adForm = document.querySelector('.ad-form');
   var selectCapacity = adForm.querySelector('#capacity');
   var selectRooms = adForm.querySelector('#room_number');
@@ -24,9 +26,9 @@ window.form = (function () {
 
   selectRooms.addEventListener('change', function () {
     if (Number(selectRooms.value) < Number(selectCapacity.value)) {
-      selectCapacity.setCustomValidity(MSG_ERR_CLOSELY);
+      selectCapacity.setCustomValidity(MsgErr.CLOSELY);
     } else if ((selectRooms.value === '100' && !(selectCapacity.value === '0')) || (selectCapacity.value === '0' && !(selectRooms.value === '100'))) {
-      selectCapacity.setCustomValidity(MSG_ERR_100ROOMS);
+      selectCapacity.setCustomValidity(MsgErr.ROOMS100);
     } else {
       selectCapacity.setCustomValidity('');
     }
@@ -34,11 +36,11 @@ window.form = (function () {
 
   selectCapacity.addEventListener('change', function () {
     if (Number(selectCapacity.value) > Number(selectRooms.value)) {
-      selectCapacity.setCustomValidity(MSG_ERR_CLOSELY);
+      selectCapacity.setCustomValidity(MsgErr.CLOSELY);
     } else if ((selectRooms.value === '100' && !(selectCapacity.value === '0'))) {
-      selectCapacity.setCustomValidity(MSG_ERR_100ROOMS);
+      selectCapacity.setCustomValidity(MsgErr.ROOMS100);
     } else if ((selectCapacity.value === '0' && !(selectRooms.value === '100'))) {
-      selectCapacity.setCustomValidity(MSG_ERR_NO_GUESTS);
+      selectCapacity.setCustomValidity(MsgErr.NO_GUESTS);
     } else {
       selectCapacity.setCustomValidity('');
     }
@@ -91,4 +93,12 @@ window.form = (function () {
 
   disableElements(formFieldsets);
   disableElements(mapFiltersElements);
+
+  return {
+    enableElements: function (arr) {
+      for (var i = 0; i < arr.length; i++) {
+        arr[i].removeAttribute('disabled');
+      }
+    }
+  };
 })();

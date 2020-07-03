@@ -1,8 +1,8 @@
 'use strict';
-(function () {
+window.main = (function () {
   var Pin = {
-    HEIGHT: 65,
-    WIDTH: 65
+    HEIGHT: 62,
+    WIDTH: 62
   };
   var HEIGHT_ARROW = 22;
   var map = document.querySelector('.map');
@@ -12,12 +12,6 @@
   var formFieldsets = adForm.children;
   var mapFilters = document.querySelector('.map__filters');
   var mapFiltersElements = mapFilters.children;
-
-  var enableElements = function (arr) {
-    for (var i = 0; i < arr.length; i++) {
-      arr[i].removeAttribute('disabled');
-    }
-  };
 
   var onPinMousePress = function (evt) {
     if (evt.button === 0) {
@@ -37,19 +31,22 @@
     if (!map.classList.contains('map--faded')) {
       yCoordinate = Math.round(parseInt(pin.style.top, 10) + Pin.HEIGHT + HEIGHT_ARROW);
     }
-    var coordinate = xCoordinate + ', ' + yCoordinate;
-    return coordinate;
+    return xCoordinate + ', ' + yCoordinate;
   };
 
   var activateStatus = function () {
-    enableElements(formFieldsets);
-    enableElements(mapFiltersElements);
+    window.form.enableElements(formFieldsets);
+    window.form.enableElements(mapFiltersElements);
     adForm.classList.remove('ad-form--disabled');
     map.classList.remove('map--faded');
-    window.pin.createPins();
+    var adsList = window.data.createAds();
+    window.pin.createPins(adsList);
     formAddress.value = getAddress(mapPinMain);
     mapPinMain.removeEventListener('keydown', onPinEnterPress);
     mapPinMain.removeEventListener('mousedown', onPinMousePress);
+    mapPinMain.addEventListener('mousedown', function (evt) {
+      window.pinMain.onMouseDown(evt);
+    });
   };
 
   getAddress(mapPinMain);
@@ -59,4 +56,8 @@
   mapPinMain.addEventListener('mousedown', onPinMousePress);
 
   mapPinMain.addEventListener('keydown', onPinEnterPress);
+
+  return {
+    getAddress: getAddress
+  };
 })();
