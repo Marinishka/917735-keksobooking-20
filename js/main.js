@@ -39,8 +39,7 @@ window.main = (function () {
     window.form.enableElements(mapFiltersElements);
     adForm.classList.remove('ad-form--disabled');
     map.classList.remove('map--faded');
-    var adsList = window.data.createAds();
-    window.pin.createPins(adsList);
+    window.backend.load(window.pin.createPins, function () {});
     formAddress.value = getAddress(mapPinMain);
     mapPinMain.removeEventListener('keydown', onPinEnterPress);
     mapPinMain.removeEventListener('mousedown', onPinMousePress);

@@ -72,13 +72,17 @@ window.card = (function () {
         }
       }
       descriptionOfLodging.textContent = ad.offer.description;
-      photoOfLodging.src = ad.offer.photos[0];
-      if (ad.offer.photos.length > 1) {
+      if (ad.offer.photos.length === 1) {
+        photoOfLodging.src = ad.offer.photos[0];
+      } else if (ad.offer.photos.length > 1) {
         for (var k = 1; k < ad.offer.photos.length; k++) {
+          photoOfLodging.src = ad.offer.photos[0];
           var nthPhotoOfLodging = photoOfLodging.cloneNode(true);
           nthPhotoOfLodging.src = ad.offer.photos[k];
           photosOfLodging.appendChild(nthPhotoOfLodging);
         }
+      } else {
+        photosOfLodging.remove();
       }
       usersAvatar.src = ad.author.avatar;
 
