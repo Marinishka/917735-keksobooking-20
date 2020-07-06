@@ -24,6 +24,16 @@ window.card = (function () {
     return roomsText + guestsText;
   };
 
+  var closeEscapePress = function (evt) {
+    var activeCardOfAd = map.querySelector('.map__card');
+    if (evt.key === 'Escape') {
+      if (activeCardOfAd) {
+        map.removeChild(activeCardOfAd);
+      }
+      document.removeEventListener('keydown', closeEscapePress);
+    }
+  };
+
   return {
     createCard: function (ad) {
       var cardOfAd = cardTemplate.cloneNode(true);
@@ -86,16 +96,6 @@ window.card = (function () {
       }
       usersAvatar.src = ad.author.avatar;
 
-      var closeEscapePress = function (evt) {
-        var activeCardOfAd = map.querySelector('.map__card');
-        if (evt.key === 'Escape') {
-          if (activeCardOfAd) {
-            map.removeChild(activeCardOfAd);
-          }
-          document.removeEventListener('keydown', closeEscapePress);
-        }
-      };
-
       closeButton.addEventListener('mousedown', function () {
         map.removeChild(cardOfAd);
         document.removeEventListener('keydown', closeEscapePress);
@@ -110,6 +110,7 @@ window.card = (function () {
       document.removeEventListener('keydown', closeEscapePress);
       document.addEventListener('keydown', closeEscapePress);
       return cardOfAd;
-    }
+    },
+    closeEscapePress: closeEscapePress
   };
 })();
