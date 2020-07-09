@@ -39,12 +39,9 @@ window.main = (function () {
   };
 
   var hideMsg = function () {
-    var msg;
-    if (document.querySelector('.success')) {
-      msg = document.querySelector('.success');
-    } else {
-      msg = document.querySelector('.error');
-    }
+    var msg = document.querySelector('.success')
+      ? document.querySelector('.success')
+      : document.querySelector('.error');
     main.removeChild(msg);
     document.removeEventListener('keydown', onEscapePress);
     document.removeEventListener('click', hideMsg);
@@ -82,13 +79,22 @@ window.main = (function () {
     evt.preventDefault();
   };
 
+  var loadError = function (msg) {
+    var node = document.createElement('div');
+    node.style.position = 'absolute';
+    node.style.top = '0px';
+    node.style = 'z-index: 1; text-align: center; background-color: #ff6547;';
+    node.textContent = msg;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
   var activateStatus = function () {
     window.form.enableElements(formFieldsets);
     window.form.enableElements(mapFiltersElements);
     adForm.addEventListener('submit', onFormSubmit);
     adForm.classList.remove('ad-form--disabled');
     map.classList.remove('map--faded');
-    window.backend.load(window.pin.createPins, function () {});
+    window.backend.load(window.pin.createPins, loadError);
     formAddress.value = getAddress(mapPinMain);
     mapPinMain.removeEventListener('keydown', onPinEnterPress);
     mapPinMain.removeEventListener('mousedown', onPinMousePress);

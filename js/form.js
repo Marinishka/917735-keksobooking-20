@@ -10,6 +10,12 @@ window.form = (function () {
     ROOMS100: 'Для 100 комнат нужно выбрать вариант не для гостей.',
     NO_GUESTS: 'Для данного варианта необходимо выбрать 100 комнат.'
   };
+  var typeToMinPrice = {
+    'bungalo': '0',
+    'flat': '1000',
+    'house': '5000',
+    'palace': '10000',
+  };
   var adForm = document.querySelector('.ad-form');
   var selectCapacity = adForm.querySelector('#capacity');
   var selectRooms = adForm.querySelector('#room_number');
@@ -20,7 +26,6 @@ window.form = (function () {
   var adType = adForm.querySelector('#type');
   var adTimeIn = adForm.querySelector('#timein');
   var adTimeOut = adForm.querySelector('#timeout');
-  var adDescription = adForm.querySelector('#description');
   var formAddress = adForm.querySelector('#address');
   var btnResetForm = adForm.querySelector('.ad-form__reset');
 
@@ -29,16 +34,11 @@ window.form = (function () {
 
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
-  var InitialState = {
-    AD_TYPE: adType.value,
-    AD_TIME_IN: adTimeIn.value,
-    MAP_PIN_MAIN: {
-      LEFT: mapPinMain.style.left,
-      TOP: mapPinMain.style.top
-    },
-    SELECT_CAPACITY: selectCapacity.value,
-    SELECT_ROOMS: selectRooms.value
+  var InitialStatePin = {
+    LEFT: mapPinMain.style.left,
+    TOP: mapPinMain.style.top
   };
+
 
   selectRooms.addEventListener('change', function () {
     if (Number(selectRooms.value) < Number(selectCapacity.value)) {
@@ -74,21 +74,7 @@ window.form = (function () {
   });
 
   adType.addEventListener('change', function () {
-    var minPrice = '';
-    switch (adType.value) {
-      case ('bungalo'):
-        minPrice = '0';
-        break;
-      case ('flat'):
-        minPrice = '1000';
-        break;
-      case ('house'):
-        minPrice = '5000';
-        break;
-      case ('palace'):
-        minPrice = '10000';
-        break;
-    }
+    var minPrice = typeToMinPrice[adType.value];
     adPrice.setAttribute('min', minPrice);
     adPrice.setAttribute('placeholder', minPrice);
   });
@@ -107,42 +93,26 @@ window.form = (function () {
     }
   };
 
-  var features = document.querySelector('.features').children;
-  var uncheckedFeature = function (collection) {
-    for (var l = 0; l < collection.length; l++) {
-      if (collection[l].checked === true) {
-        collection[l].checked = false;
-      }
-    }
-  };
-
   var resetForm = function () {
     disableElements(formFieldsets);
     disableElements(mapFiltersElements);
     adForm.classList.add('ad-form--disabled');
     map.classList.add('map--faded');
-    var mapPin = document.querySelectorAll('.map__pin');
-    var mapPins = document.querySelector('.map__pins');
-    for (var i = 1; i < mapPin.length; i++) {
-      mapPins.removeChild(mapPin[i]);
-    }
-    adLabel.value = '';
-    adPrice.value = '';
-    adDescription.value = '';
-    adType.value = InitialState.AD_TYPE;
+    document.querySelectorAll('.map__pin').forEach(function (pin) {
+      if (!pin.classList.contains('map__pin--main')) {
+        pin.remove();
+      }
+    });
     adPrice.setAttribute('min', '1000');
     adPrice.setAttribute('placeholder', '1000');
-    adTimeIn.value = adTimeOut.value = InitialState.AD_TIME_IN;
-    mapPinMain.style.left = InitialState.MAP_PIN_MAIN.LEFT;
-    mapPinMain.style.top = InitialState.MAP_PIN_MAIN.TOP;
+    mapPinMain.style.left = InitialStatePin.LEFT;
+    mapPinMain.style.top = InitialStatePin.TOP;
     formAddress.value = window.main.getAddress(mapPinMain);
-    selectCapacity.value = InitialState.SELECT_CAPACITY;
-    selectRooms.value = InitialState.SELECT_ROOMS;
+    adForm.reset();
     var cardOnMap = map.querySelector('.map__card');
     if (cardOnMap) {
       map.removeChild(cardOnMap);
     }
-    uncheckedFeature(features);
     adForm.removeEventListener('submit', window.main.onFormSubmit);
     mapPinMain.addEventListener('mousedown', window.main.onPinMousePress);
     mapPinMain.addEventListener('keydown', window.main.onPinEnterPress);

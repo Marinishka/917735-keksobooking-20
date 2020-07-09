@@ -1,6 +1,12 @@
 'use strict';
 
 window.card = (function () {
+  var typeToTypeInCard = {
+    'flat': 'Квартира',
+    'bungalo': 'Бунгало',
+    'house': 'Дом',
+    'palace': 'Дворец'
+  };
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var map = document.querySelector('.map');
 
@@ -25,12 +31,20 @@ window.card = (function () {
   };
 
   var closeEscapePress = function (evt) {
+    deactivatePin();
     var activeCardOfAd = map.querySelector('.map__card');
     if (evt.key === 'Escape') {
       if (activeCardOfAd) {
         map.removeChild(activeCardOfAd);
       }
       document.removeEventListener('keydown', closeEscapePress);
+    }
+  };
+
+  var deactivatePin = function () {
+    var activeElement = document.querySelector('.map__pin--active');
+    if (activeElement) {
+      activeElement.classList.remove('map__pin--active');
     }
   };
 
@@ -53,21 +67,10 @@ window.card = (function () {
       titleOfAd.textContent = ad.offer.title;
       addressOfLodging.textContent = ad.offer.address;
       priceOfLodging.textContent = ad.offer.price + '₽/ночь';
-      switch (ad.offer.type) {
-        case 'flat':
-          typeOfLodging.textContent = 'Квартира';
-          break;
-        case 'bungalo':
-          typeOfLodging.textContent = 'Бунгало';
-          break;
-        case 'house':
-          typeOfLodging.textContent = 'Дом';
-          break;
-        case 'palace':
-          typeOfLodging.textContent = 'Дворец';
-          break;
-        default:
-          typeOfLodging.style = 'display: none';
+      if (ad.offer.type) {
+        typeOfLodging.textContent = typeToTypeInCard[ad.offer.type];
+      } else {
+        typeOfLodging.style = 'display: none';
       }
       capacity.textContent = getCapacityOffer(ad.offer.rooms, ad.offer.guests);
       timeCheckinCheckout.textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout + '.';
@@ -97,11 +100,13 @@ window.card = (function () {
       usersAvatar.src = ad.author.avatar;
 
       closeButton.addEventListener('mousedown', function () {
+        deactivatePin();
         map.removeChild(cardOfAd);
         document.removeEventListener('keydown', closeEscapePress);
       });
 
       closeButton.addEventListener('keydown', function (evt) {
+        deactivatePin();
         if (evt.key === 'Enter') {
           map.removeChild(cardOfAd);
         }
