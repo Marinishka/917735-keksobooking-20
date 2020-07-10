@@ -17,11 +17,20 @@ window.pin = (function () {
     map.insertBefore(window.card.createCard(selectedAd), mapFiltersContainer);
   };
 
+  var changeActivePin = function (element) {
+    var activeElement = document.querySelector('.map__pin--active');
+    if (activeElement) {
+      activeElement.classList.remove('map__pin--active');
+    }
+    element.classList.add('map__pin--active');
+  };
+
   var addPinListeners = function (element, selectedAd) {
     element.addEventListener('mousedown', function (evt) {
       var mapCard = map.querySelector('.map__card');
       if (evt.button === 0) {
         changeCard(mapCard, selectedAd);
+        changeActivePin(element);
       }
     });
     element.addEventListener('keydown', function (evt) {
