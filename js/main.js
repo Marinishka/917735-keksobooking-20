@@ -16,6 +16,8 @@ window.main = (function () {
   var msgPopupSuccessTemplate = document.querySelector('#success').content.querySelector('.success');
   var msgPopupErrorTemplate = document.querySelector('#error').content.querySelector('.error');
   var main = document.querySelector('main');
+  var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var selectType = mapFiltersContainer.querySelector('#housing-type');
 
   var onPinMousePress = function (evt) {
     if (evt.button === 0) {
@@ -86,6 +88,44 @@ window.main = (function () {
     node.style = 'z-index: 1; text-align: center; background-color: #ff6547;';
     node.textContent = msg;
     document.body.insertAdjacentElement('afterbegin', node);
+    window.form.disableElements(mapFiltersElements);
+  };
+
+  var loadedAds = [];
+  var successHandler = function (data) {
+    loadedAds = data;
+    selectType.addEventListener('change', filterType);
+    window.pin.createPins(loadedAds);
+  };
+
+  var filterType = function () {
+    var activeCardOfAd = map.querySelector('.map__card');
+    if (selectType.value === 'any') {
+      document.querySelectorAll('.map__pin').forEach(function (pin) {
+        if (!pin.classList.contains('map__pin--main')) {
+          pin.remove();
+        }
+      });
+      if (activeCardOfAd) {
+        map.removeChild(activeCardOfAd);
+        document.removeEventListener('keydown', window.card.closeEscapePress);
+      }
+      window.pin.createPins(loadedAds);
+    } else {
+      var filteredAds = loadedAds.filter(function (it) {
+        return it.offer.type === selectType.value;
+      });
+      document.querySelectorAll('.map__pin').forEach(function (pin) {
+        if (!pin.classList.contains('map__pin--main')) {
+          pin.remove();
+        }
+      });
+      if (activeCardOfAd) {
+        map.removeChild(activeCardOfAd);
+        document.removeEventListener('keydown', window.card.closeEscapePress);
+      }
+      window.pin.createPins(filteredAds);
+    }
   };
 
   var activateStatus = function () {
@@ -94,7 +134,7 @@ window.main = (function () {
     adForm.addEventListener('submit', onFormSubmit);
     adForm.classList.remove('ad-form--disabled');
     map.classList.remove('map--faded');
-    window.backend.load(window.pin.createPins, loadError);
+    window.backend.load(successHandler, loadError);
     formAddress.value = getAddress(mapPinMain);
     mapPinMain.removeEventListener('keydown', onPinEnterPress);
     mapPinMain.removeEventListener('mousedown', onPinMousePress);
@@ -116,6 +156,7 @@ window.main = (function () {
     getAddress: getAddress,
     onPinMousePress: onPinMousePress,
     onPinEnterPress: onPinEnterPress,
-    onFormSubmit: onFormSubmit
+    onFormSubmit: onFormSubmit,
+    filterType: filterType
   };
 })();

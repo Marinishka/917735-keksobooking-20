@@ -50,6 +50,10 @@ window.backend = (function () {
         }
       });
 
+      xhr.addEventListener('error', function () {
+        onError('Произошла ошибка соединения');
+      });
+
       xhr.open('POST', Url.UPLOAD);
       xhr.send(data);
     }
