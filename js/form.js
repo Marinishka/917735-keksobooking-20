@@ -34,6 +34,8 @@ window.form = (function () {
 
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
+  var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var selectType = mapFiltersContainer.querySelector('#housing-type');
   var InitialStatePin = {
     LEFT: mapPinMain.style.left,
     TOP: mapPinMain.style.top
@@ -118,6 +120,7 @@ window.form = (function () {
     mapPinMain.addEventListener('keydown', window.main.onPinEnterPress);
     btnResetForm.removeEventListener('click', resetForm);
     document.removeEventListener('keydown', window.card.closeEscapePress);
+    selectType.removeEventListener('change', window.main.filterType);
   };
 
   disableElements(formFieldsets);
