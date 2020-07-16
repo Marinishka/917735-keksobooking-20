@@ -44,8 +44,8 @@ window.pin = (function () {
   };
 
   var createPins = function (ads) {
-    var QUANTITY_ADS = ads.length < MAX_QUANTITY_ADS ? ads.length : MAX_QUANTITY_ADS;
-    for (var i = 0; i < QUANTITY_ADS; i++) {
+    var quantityAds = ads.length < MAX_QUANTITY_ADS ? ads.length : MAX_QUANTITY_ADS;
+    for (var i = 0; i < quantityAds; i++) {
       var pinOnMap = pinTemplate.cloneNode(true);
       addPinListeners(pinOnMap, ads[i]);
       pinOnMap.style.left = (ads[i].location.x - Offset.X) + 'px';

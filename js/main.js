@@ -18,6 +18,10 @@ window.main = (function () {
   var main = document.querySelector('main');
   var mapFiltersContainer = document.querySelector('.map__filters-container');
   var selectType = mapFiltersContainer.querySelector('#housing-type');
+  var selectPrice = mapFiltersContainer.querySelector('#housing-price');
+  var selectRooms = mapFiltersContainer.querySelector('#housing-rooms');
+  var selectGuests = mapFiltersContainer.querySelector('#housing-guests');
+  var selectFeatures = mapFiltersContainer.querySelector('#housing-features');
 
   var onPinMousePress = function (evt) {
     if (evt.button === 0) {
@@ -94,38 +98,40 @@ window.main = (function () {
   var loadedAds = [];
   var successHandler = function (data) {
     loadedAds = data;
-    selectType.addEventListener('change', filterType);
     window.pin.createPins(loadedAds);
+    selectType.addEventListener('change', window.debounce(updatePins));
+    selectPrice.addEventListener('change', window.debounce(updatePins));
+    selectRooms.addEventListener('change', window.debounce(updatePins));
+    selectGuests.addEventListener('change', window.debounce(updatePins));
+    selectFeatures.addEventListener('change', window.debounce(updatePins));
   };
 
-  var filterType = function () {
+  var removePinAndActiveCard = function () {
+    document.querySelectorAll('.map__pin').forEach(function (pin) {
+      if (!pin.classList.contains('map__pin--main')) {
+        pin.remove();
+      }
+    });
     var activeCardOfAd = map.querySelector('.map__card');
-    if (selectType.value === 'any') {
-      document.querySelectorAll('.map__pin').forEach(function (pin) {
-        if (!pin.classList.contains('map__pin--main')) {
-          pin.remove();
-        }
-      });
-      if (activeCardOfAd) {
-        map.removeChild(activeCardOfAd);
-        document.removeEventListener('keydown', window.card.closeEscapePress);
-      }
-      window.pin.createPins(loadedAds);
-    } else {
-      var filteredAds = loadedAds.filter(function (it) {
-        return it.offer.type === selectType.value;
-      });
-      document.querySelectorAll('.map__pin').forEach(function (pin) {
-        if (!pin.classList.contains('map__pin--main')) {
-          pin.remove();
-        }
-      });
-      if (activeCardOfAd) {
-        map.removeChild(activeCardOfAd);
-        document.removeEventListener('keydown', window.card.closeEscapePress);
-      }
-      window.pin.createPins(filteredAds);
+    if (activeCardOfAd) {
+      map.removeChild(activeCardOfAd);
+      document.removeEventListener('keydown', window.card.closeEscapePress);
     }
+  };
+
+  var updatePins = function () {
+    var filteredAds = loadedAds.slice(0);
+    if (selectType.value === selectPrice.value === selectRooms === selectGuests === 'any') {
+      return;
+    } else {
+      window.filter.filterType(filteredAds);
+      window.filter.filterPrice(filteredAds);
+      window.filter.filterRooms(filteredAds);
+      window.filter.filterGuests(filteredAds);
+      window.filter.filterFeatures(filteredAds);
+    }
+    removePinAndActiveCard();
+    window.pin.createPins(filteredAds);
   };
 
   var activateStatus = function () {
@@ -156,7 +162,6 @@ window.main = (function () {
     getAddress: getAddress,
     onPinMousePress: onPinMousePress,
     onPinEnterPress: onPinEnterPress,
-    onFormSubmit: onFormSubmit,
-    filterType: filterType
+    onFormSubmit: onFormSubmit
   };
 })();
