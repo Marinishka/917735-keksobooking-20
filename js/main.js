@@ -99,11 +99,11 @@ window.main = (function () {
   var successHandler = function (data) {
     loadedAds = data;
     window.pin.createPins(loadedAds);
-    selectType.addEventListener('change', window.debounce(updatePins));
-    selectPrice.addEventListener('change', window.debounce(updatePins));
-    selectRooms.addEventListener('change', window.debounce(updatePins));
-    selectGuests.addEventListener('change', window.debounce(updatePins));
-    selectFeatures.addEventListener('change', window.debounce(updatePins));
+    selectType.addEventListener('change', onDebouncedUpdatePins);
+    selectPrice.addEventListener('change', onDebouncedUpdatePins);
+    selectRooms.addEventListener('change', onDebouncedUpdatePins);
+    selectGuests.addEventListener('change', onDebouncedUpdatePins);
+    selectFeatures.addEventListener('change', onDebouncedUpdatePins);
   };
 
   var removePinAndActiveCard = function () {
@@ -120,15 +120,15 @@ window.main = (function () {
   };
 
   var updatePins = function () {
-    var filteredAds = loadedAds.slice(0);
+    var filteredAds = loadedAds.slice();
     if (selectType.value === selectPrice.value === selectRooms === selectGuests === 'any') {
       return;
     } else {
-      window.filter.filterType(filteredAds);
-      window.filter.filterPrice(filteredAds);
-      window.filter.filterRooms(filteredAds);
-      window.filter.filterGuests(filteredAds);
-      window.filter.filterFeatures(filteredAds);
+      filteredAds = window.filter.filterType(filteredAds);
+      filteredAds = window.filter.filterPrice(filteredAds);
+      filteredAds = window.filter.filterRooms(filteredAds);
+      filteredAds = window.filter.filterGuests(filteredAds);
+      filteredAds = window.filter.filterFeatures(filteredAds);
     }
     removePinAndActiveCard();
     window.pin.createPins(filteredAds);
@@ -150,6 +150,8 @@ window.main = (function () {
     btnResetForm.addEventListener('click', window.form.resetForm);
   };
 
+  var onDebouncedUpdatePins = window.debounce(updatePins);
+
   getAddress(mapPinMain);
 
   formAddress.value = getAddress(mapPinMain);
@@ -162,6 +164,7 @@ window.main = (function () {
     getAddress: getAddress,
     onPinMousePress: onPinMousePress,
     onPinEnterPress: onPinEnterPress,
-    onFormSubmit: onFormSubmit
+    onFormSubmit: onFormSubmit,
+    onDebouncedUpdatePins: onDebouncedUpdatePins
   };
 })();

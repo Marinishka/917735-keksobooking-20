@@ -124,11 +124,11 @@ window.form = (function () {
     mapPinMain.addEventListener('keydown', window.main.onPinEnterPress);
     btnResetForm.removeEventListener('click', resetForm);
     document.removeEventListener('keydown', window.card.closeEscapePress);
-    selectTypeFilter.removeEventListener('change', window.debounce(window.main.updatePins));
-    selectPriceFilter.removeEventListener('change', window.debounce(window.main.updatePins));
-    selectRoomsFilter.removeEventListener('change', window.debounce(window.main.updatePins));
-    selectGuestsFilter.removeEventListener('change', window.debounce(window.main.updatePins));
-    selectFeaturesFilter.removeEventListener('change', window.debounce(window.main.updatePins));
+    selectTypeFilter.removeEventListener('change', window.main.onDebouncedUpdatePins);
+    selectPriceFilter.removeEventListener('change', window.main.onDebouncedUpdatePins);
+    selectRoomsFilter.removeEventListener('change', window.main.onDebouncedUpdatePins);
+    selectGuestsFilter.removeEventListener('change', window.main.onDebouncedUpdatePins);
+    selectFeaturesFilter.removeEventListener('change', window.main.onDebouncedUpdatePins);
   };
 
   disableElements(formFieldsets);

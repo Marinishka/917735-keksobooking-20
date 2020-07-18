@@ -2,15 +2,15 @@
 
 window.filter = (function () {
   var priceLevelToPrice = {
-    'middle': {
+    middle: {
       MIN: 10000,
       MAX: 50000
     },
-    'low': {
+    low: {
       MIN: 0,
       MAX: 10000
     },
-    'high': {
+    high: {
       MIN: 50000,
       MAX: 10000000
     }
@@ -25,68 +25,56 @@ window.filter = (function () {
 
   var filterType = function (ads) {
     if (selectType.value === 'any') {
-      return;
+      return ads;
     } else {
-      var copy = ads.slice(0);
-      for (var i = 0; i < copy.length; i++) {
-        if (!(copy[i].offer.type === selectType.value)) {
-          ads.splice(ads.indexOf(copy[i]), 1);
-        }
-      }
+      return ads.slice().filter(function (ad) {
+        return ad.offer.type === selectType.value;
+      });
     }
   };
 
   var filterPrice = function (ads) {
     if (selectPrice.value === 'any') {
-      return;
+      return ads;
     } else {
-      var copy = ads.slice(0);
-      for (var i = 0; i < copy.length; i++) {
-        if (!(copy[i].offer.price >= priceLevelToPrice[selectPrice.value].MIN &&
-              copy[i].offer.price < priceLevelToPrice[selectPrice.value].MAX)) {
-          ads.splice(ads.indexOf(copy[i]), 1);
-        }
-      }
+      return ads.slice().filter(function (ad) {
+        return ad.offer.price >= priceLevelToPrice[selectPrice.value].MIN &&
+        ad.offer.price < priceLevelToPrice[selectPrice.value].MAX;
+      });
     }
   };
 
   var filterRooms = function (ads) {
     if (selectRooms.value === 'any') {
-      return;
+      return ads;
     } else {
-      var copy = ads.slice(0);
-      for (var i = 0; i < copy.length; i++) {
-        if (!(copy[i].offer.rooms === Number(selectRooms.value))) {
-          ads.splice(ads.indexOf(copy[i]), 1);
-        }
-      }
+      return ads.slice().filter(function (ad) {
+        return ad.offer.rooms === Number(selectRooms.value);
+      });
     }
   };
 
   var filterGuests = function (ads) {
     if (selectGuests.value === 'any') {
-      return;
+      return ads;
     } else {
-      var copy = ads.slice(0);
-      for (var i = 0; i < copy.length; i++) {
-        if (!(copy[i].offer.guests === Number(selectGuests.value))) {
-          ads.splice(ads.indexOf(copy[i]), 1);
-        }
-      }
+      return ads.slice().filter(function (ad) {
+        return ad.offer.guests === Number(selectGuests.value);
+      });
     }
   };
 
   var filterFeatures = function (ads) {
-    var copy = ads.slice(0);
     for (var i = 0; i < allFeatures.length; i++) {
-      if (allFeatures[i].checked === true) {
-        for (var j = 0; j < copy.length; j++) {
-          if (!(copy[j].offer.features.includes(allFeatures[i].value))) {
-            ads.splice(ads.indexOf(copy[j]), 1);
-          }
-        }
+      if (allFeatures[i].checked === false) {
+        ads = ads;
+      } else {
+        ads = ads.slice().filter(function (ad) {
+          return ad.offer.features.includes(allFeatures[i].value);
+        });
       }
     }
+    return ads;
   };
 
   return {
