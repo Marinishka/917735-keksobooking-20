@@ -22,6 +22,8 @@ window.main = (function () {
   var selectRooms = mapFiltersContainer.querySelector('#housing-rooms');
   var selectGuests = mapFiltersContainer.querySelector('#housing-guests');
   var selectFeatures = mapFiltersContainer.querySelector('#housing-features');
+  var avatarInput = document.querySelector('.ad-form-header__input');
+  var photoInput = document.querySelector('.ad-form__upload');
 
   var onPinMousePress = function (evt) {
     if (evt.button === 0) {
@@ -148,6 +150,8 @@ window.main = (function () {
       window.pinMain.onMouseDown(evt);
     });
     btnResetForm.addEventListener('click', window.form.resetForm);
+    avatarInput.addEventListener('change', window.image.onAvatarInputChange);
+    photoInput.addEventListener('change', window.image.onPhotoInputChange);
   };
 
   var onDebouncedUpdatePins = window.debounce(updatePins);

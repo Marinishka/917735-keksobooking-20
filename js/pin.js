@@ -20,9 +20,9 @@ window.pin = (function () {
   };
 
   var changeActivePin = function (element) {
-    var activeElement = document.querySelector('.map__pin--active');
-    if (activeElement) {
-      activeElement.classList.remove('map__pin--active');
+    var activePin = document.querySelector('.map__pin--active');
+    if (activePin) {
+      activePin.classList.remove('map__pin--active');
     }
     element.classList.add('map__pin--active');
   };
