@@ -116,7 +116,7 @@ window.form = (function () {
     adPrice.setAttribute('placeholder', '1000');
     mapPinMain.style.left = InitialStatePin.LEFT;
     mapPinMain.style.top = InitialStatePin.TOP;
-    formAddress.value = window.main.getAddress(mapPinMain);
+    formAddress.value = window.address.getAddress(mapPinMain);
     adForm.reset();
     var cardOnMap = map.querySelector('.map__card');
     if (cardOnMap) {

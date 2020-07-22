@@ -9,10 +9,9 @@ window.image = (function () {
 
   var isMatched = function (file) {
     var fileName = file.name.toLowerCase();
-    var matches = FILE_TYPES.some(function (it) {
+    return FILE_TYPES.some(function (it) {
       return fileName.endsWith(it);
     });
-    return matches;
   };
 
   var onAvatarInputChange = function () {

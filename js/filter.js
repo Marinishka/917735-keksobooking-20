@@ -77,11 +77,21 @@ window.filter = (function () {
     return ads;
   };
 
+  var getFilteredAds = function (loadedAds) {
+    var filteredAds = loadedAds.slice();
+    if (selectType.value === selectPrice.value === selectRooms === selectGuests === 'any') {
+      filteredAds = filteredAds;
+    } else {
+      filteredAds = filterType(filteredAds);
+      filteredAds = filterPrice(filteredAds);
+      filteredAds = filterRooms(filteredAds);
+      filteredAds = filterGuests(filteredAds);
+      filteredAds = filterFeatures(filteredAds);
+    }
+    return filteredAds;
+  };
+
   return {
-    filterType: filterType,
-    filterPrice: filterPrice,
-    filterRooms: filterRooms,
-    filterGuests: filterGuests,
-    filterFeatures: filterFeatures
+    getFilteredAds: getFilteredAds
   };
 })();

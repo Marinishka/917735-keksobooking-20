@@ -5,6 +5,10 @@ window.pinMain = (function () {
     HEIGHT: 62,
     WIDTH: 62
   };
+  var LimitY = {
+    MAX: 630,
+    MIN: 130
+  };
   var HEIGHT_ARROW = 22;
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapPins = document.querySelector('.map__pins');
@@ -36,13 +40,13 @@ window.pinMain = (function () {
         var arrowheadCoordinateY = moveY + Pin.HEIGHT + HEIGHT_ARROW;
         if (arrowheadCoordinateX < 0 ||
             arrowheadCoordinateX > widthMapPins ||
-            arrowheadCoordinateY < window.data.LimitY.MIN ||
-            arrowheadCoordinateY > window.data.LimitY.MAX) {
+            arrowheadCoordinateY < LimitY.MIN ||
+            arrowheadCoordinateY > LimitY.MAX) {
           return;
         }
         mapPinMain.style.left = moveX + 'px';
         mapPinMain.style.top = moveY + 'px';
-        formAddress.value = window.main.getAddress(mapPinMain);
+        formAddress.value = window.address.getAddress(mapPinMain);
       };
 
       var onMouseUp = function () {

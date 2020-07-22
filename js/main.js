@@ -1,10 +1,5 @@
 'use strict';
 window.main = (function () {
-  var Pin = {
-    HEIGHT: 62,
-    WIDTH: 62
-  };
-  var HEIGHT_ARROW = 22;
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
@@ -35,15 +30,6 @@ window.main = (function () {
     if (evt.key === 'Enter') {
       activateStatus();
     }
-  };
-
-  var getAddress = function (pin) {
-    var xCoordinate = Math.round(parseInt(pin.style.left, 10) + Pin.WIDTH / 2);
-    var yCoordinate = Math.round(parseInt(pin.style.top, 10) + Pin.HEIGHT / 2);
-    if (!map.classList.contains('map--faded')) {
-      yCoordinate = Math.round(parseInt(pin.style.top, 10) + Pin.HEIGHT + HEIGHT_ARROW);
-    }
-    return xCoordinate + ', ' + yCoordinate;
   };
 
   var hideMsg = function () {
@@ -87,16 +73,6 @@ window.main = (function () {
     evt.preventDefault();
   };
 
-  var loadError = function (msg) {
-    var node = document.createElement('div');
-    node.style.position = 'absolute';
-    node.style.top = '0px';
-    node.style = 'z-index: 1; text-align: center; background-color: #ff6547;';
-    node.textContent = msg;
-    document.body.insertAdjacentElement('afterbegin', node);
-    window.form.disableElements(mapFiltersElements);
-  };
-
   var loadedAds = [];
   var successHandler = function (data) {
     loadedAds = data;
@@ -108,32 +84,9 @@ window.main = (function () {
     selectFeatures.addEventListener('change', onDebouncedUpdatePins);
   };
 
-  var removePinAndActiveCard = function () {
-    document.querySelectorAll('.map__pin').forEach(function (pin) {
-      if (!pin.classList.contains('map__pin--main')) {
-        pin.remove();
-      }
-    });
-    var activeCardOfAd = map.querySelector('.map__card');
-    if (activeCardOfAd) {
-      map.removeChild(activeCardOfAd);
-      document.removeEventListener('keydown', window.card.closeEscapePress);
-    }
-  };
-
   var updatePins = function () {
-    var filteredAds = loadedAds.slice();
-    if (selectType.value === selectPrice.value === selectRooms === selectGuests === 'any') {
-      return;
-    } else {
-      filteredAds = window.filter.filterType(filteredAds);
-      filteredAds = window.filter.filterPrice(filteredAds);
-      filteredAds = window.filter.filterRooms(filteredAds);
-      filteredAds = window.filter.filterGuests(filteredAds);
-      filteredAds = window.filter.filterFeatures(filteredAds);
-    }
-    removePinAndActiveCard();
-    window.pin.createPins(filteredAds);
+    window.activePinsAndCard.removeActivePinsAndCard();
+    window.pin.createPins(window.filter.getFilteredAds(loadedAds));
   };
 
   var activateStatus = function () {
@@ -142,8 +95,8 @@ window.main = (function () {
     adForm.addEventListener('submit', onFormSubmit);
     adForm.classList.remove('ad-form--disabled');
     map.classList.remove('map--faded');
-    window.backend.load(successHandler, loadError);
-    formAddress.value = getAddress(mapPinMain);
+    window.backend.load(successHandler, window.msgError.loadError);
+    formAddress.value = window.address.getAddress(mapPinMain);
     mapPinMain.removeEventListener('keydown', onPinEnterPress);
     mapPinMain.removeEventListener('mousedown', onPinMousePress);
     mapPinMain.addEventListener('mousedown', function (evt) {
@@ -156,16 +109,15 @@ window.main = (function () {
 
   var onDebouncedUpdatePins = window.debounce(updatePins);
 
-  getAddress(mapPinMain);
+  window.address.getAddress(mapPinMain);
 
-  formAddress.value = getAddress(mapPinMain);
+  formAddress.value = window.address.getAddress(mapPinMain);
 
   mapPinMain.addEventListener('mousedown', onPinMousePress);
 
   mapPinMain.addEventListener('keydown', onPinEnterPress);
 
   return {
-    getAddress: getAddress,
     onPinMousePress: onPinMousePress,
     onPinEnterPress: onPinEnterPress,
     onFormSubmit: onFormSubmit,
