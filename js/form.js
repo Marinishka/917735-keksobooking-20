@@ -44,7 +44,9 @@ window.form = (function () {
     LEFT: mapPinMain.style.left,
     TOP: mapPinMain.style.top
   };
-
+  var avatarInput = document.querySelector('.ad-form-header__input');
+  var avatarPreview = document.querySelector('.ad-form-header__preview img');
+  var photoInput = document.querySelector('.ad-form__input');
 
   selectRooms.addEventListener('change', function () {
     if (Number(selectRooms.value) < Number(selectCapacity.value)) {
@@ -100,6 +102,7 @@ window.form = (function () {
   };
 
   var resetForm = function () {
+    var photoPreviewImg = document.querySelector('.ad-form__photo img');
     disableElements(formFieldsets);
     disableElements(mapFiltersElements);
     adForm.classList.add('ad-form--disabled');
@@ -129,6 +132,12 @@ window.form = (function () {
     selectRoomsFilter.removeEventListener('change', window.main.onDebouncedUpdatePins);
     selectGuestsFilter.removeEventListener('change', window.main.onDebouncedUpdatePins);
     selectFeaturesFilter.removeEventListener('change', window.main.onDebouncedUpdatePins);
+    avatarInput.removeEventListener('change', window.image.onAvatarInputChange);
+    photoInput.removeEventListener('change', window.image.onPhotoInputChange);
+    avatarPreview.src = 'img/muffin-grey.svg';
+    if (photoPreviewImg) {
+      photoPreviewImg.remove();
+    }
   };
 
   disableElements(formFieldsets);
