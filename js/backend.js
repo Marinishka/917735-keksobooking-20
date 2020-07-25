@@ -1,6 +1,6 @@
 'use strict';
 
-window.backend = (function () {
+(function () {
   var Url = {
     LOAD: 'https://javascript.pages.academy/keksobooking/data',
     UPLOAD: 'https://javascript.pages.academy/keksobooking'
@@ -10,7 +10,7 @@ window.backend = (function () {
   };
   var TIMEOUT = 10000;
 
-  return {
+  window.backend = {
     load: function (onSuccess, onError) {
       var xhr = new XMLHttpRequest();
 

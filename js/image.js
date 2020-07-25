@@ -1,6 +1,6 @@
 'use strict';
 
-window.image = (function () {
+(function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var avatarInput = document.querySelector('.ad-form-header__input');
   var avatarPreview = document.querySelector('.ad-form-header__preview img');
@@ -44,7 +44,7 @@ window.image = (function () {
     }
   };
 
-  return {
+  window.image = {
     onAvatarInputChange: onAvatarInputChange,
     onPhotoInputChange: onPhotoInputChange
   };

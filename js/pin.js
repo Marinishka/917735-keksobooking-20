@@ -1,6 +1,6 @@
 'use strict';
 
-window.pin = (function () {
+(function () {
   var MAX_QUANTITY_ADS = 5;
   var Offset = {
     X: 25,
@@ -10,13 +10,12 @@ window.pin = (function () {
   var mapPins = document.querySelector('.map__pins');
   var fragment = document.createDocumentFragment();
   var mapFiltersContainer = document.querySelector('.map__filters-container');
-  var map = document.querySelector('.map');
 
   var changeCard = function (card, selectedAd) {
     if (card) {
-      map.removeChild(card);
+      window.main.map.removeChild(card);
     }
-    map.insertBefore(window.card.createCard(selectedAd), mapFiltersContainer);
+    window.main.map.insertBefore(window.card.create(selectedAd), mapFiltersContainer);
   };
 
   var changeActivePin = function (element) {
@@ -29,37 +28,37 @@ window.pin = (function () {
 
   var addPinListeners = function (element, selectedAd) {
     element.addEventListener('mousedown', function (evt) {
-      var mapCard = map.querySelector('.map__card');
-      if (evt.button === 0) {
+      var mapCard = window.main.map.querySelector('.map__card');
+      if (evt.button === window.main.KeyCode.MOUSE_LEFT_BUTTON) {
         changeCard(mapCard, selectedAd);
         changeActivePin(element);
       }
     });
     element.addEventListener('keydown', function (evt) {
-      var mapCard = map.querySelector('.map__card');
-      if (evt.key === 'Enter') {
+      var mapCard = window.main.map.querySelector('.map__card');
+      if (evt.key === window.main.KeyCode.ENTER) {
         changeCard(mapCard, selectedAd);
       }
     });
   };
 
-  var createPins = function (ads) {
-    var quantityAds = ads.length < MAX_QUANTITY_ADS ? ads.length : MAX_QUANTITY_ADS;
-    for (var i = 0; i < quantityAds; i++) {
-      var pinOnMap = pinTemplate.cloneNode(true);
-      addPinListeners(pinOnMap, ads[i]);
-      pinOnMap.style.left = (ads[i].location.x - Offset.X) + 'px';
-      pinOnMap.style.top = (ads[i].location.y - Offset.Y) + 'px';
-      pinOnMap.setAttribute('data-number-of-ad', i);
-      var imageOfPin = pinOnMap.querySelector('img');
-      imageOfPin.src = ads[i].author.avatar;
-      imageOfPin.alt = ads[i].offer.title;
-      fragment.appendChild(pinOnMap);
+  window.pin = {
+    create: function (ads) {
+      ads = ads.filter(function (ad) {
+        return ad.offer;
+      });
+      var quantityAds = ads.length < MAX_QUANTITY_ADS ? ads.length : MAX_QUANTITY_ADS;
+      for (var i = 0; i < quantityAds; i++) {
+        var pinOnMap = pinTemplate.cloneNode(true);
+        addPinListeners(pinOnMap, ads[i]);
+        pinOnMap.style.left = (ads[i].location.x - Offset.X) + 'px';
+        pinOnMap.style.top = (ads[i].location.y - Offset.Y) + 'px';
+        var imageOfPin = pinOnMap.querySelector('img');
+        imageOfPin.src = ads[i].author.avatar;
+        imageOfPin.alt = ads[i].offer.title;
+        fragment.appendChild(pinOnMap);
+      }
+      mapPins.appendChild(fragment);
     }
-    mapPins.appendChild(fragment);
-  };
-
-  return {
-    createPins: createPins
   };
 })();

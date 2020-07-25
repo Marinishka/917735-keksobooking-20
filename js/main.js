@@ -1,7 +1,12 @@
 'use strict';
-window.main = (function () {
+(function () {
+  var KeyCode = {
+    MOUSE_LEFT_BUTTON: 0,
+    ENTER: 'Enter',
+    ESCAPE: 'Escape'
+  };
   var map = document.querySelector('.map');
-  var mapPinMain = document.querySelector('.map__pin--main');
+  var mapPinMain = map.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
   var formAddress = adForm.querySelector('#address');
   var formFieldsets = adForm.children;
@@ -21,20 +26,21 @@ window.main = (function () {
   var photoInput = document.querySelector('.ad-form__upload');
 
   var onPinMousePress = function (evt) {
-    if (evt.button === 0) {
+    if (evt.button === KeyCode.MOUSE_LEFT_BUTTON) {
       activateStatus();
     }
   };
 
   var onPinEnterPress = function (evt) {
-    if (evt.key === 'Enter') {
+    if (evt.key === KeyCode.ENTER) {
       activateStatus();
     }
   };
 
   var hideMsg = function () {
-    var msg = document.querySelector('.success')
-      ? document.querySelector('.success')
+    var msgWithSuccess = document.querySelector('.success');
+    var msg = msgWithSuccess
+      ? msgWithSuccess
       : document.querySelector('.error');
     main.removeChild(msg);
     document.removeEventListener('keydown', onEscapePress);
@@ -42,7 +48,7 @@ window.main = (function () {
   };
 
   var onEscapePress = function (evt) {
-    if (evt.key === 'Escape') {
+    if (evt.key === KeyCode.ESCAPE) {
       hideMsg();
       document.removeEventListener('keydown', onEscapePress);
       document.removeEventListener('click', hideMsg);
@@ -54,7 +60,7 @@ window.main = (function () {
     main.appendChild(msgSuccess);
     document.addEventListener('click', hideMsg);
     document.addEventListener('keydown', onEscapePress);
-    window.form.resetForm();
+    window.form.reset();
   };
 
   var submitError = function () {
@@ -76,7 +82,7 @@ window.main = (function () {
   var loadedAds = [];
   var successHandler = function (data) {
     loadedAds = data;
-    window.pin.createPins(loadedAds);
+    window.pin.create(loadedAds);
     selectType.addEventListener('change', onDebouncedUpdatePins);
     selectPrice.addEventListener('change', onDebouncedUpdatePins);
     selectRooms.addEventListener('change', onDebouncedUpdatePins);
@@ -85,8 +91,8 @@ window.main = (function () {
   };
 
   var updatePins = function () {
-    window.activePinsAndCard.removeActivePinsAndCard();
-    window.pin.createPins(window.filter.getFilteredAds(loadedAds));
+    window.removeActivePinsAndCard();
+    window.pin.create(window.filter.getFilteredAds(loadedAds));
   };
 
   var activateStatus = function () {
@@ -95,32 +101,36 @@ window.main = (function () {
     adForm.addEventListener('submit', onFormSubmit);
     adForm.classList.remove('ad-form--disabled');
     map.classList.remove('map--faded');
-    window.backend.load(successHandler, window.msgError.loadError);
-    formAddress.value = window.address.getAddress(mapPinMain);
+    window.backend.load(successHandler, window.msgError);
+    formAddress.value = window.address(mapPinMain);
     mapPinMain.removeEventListener('keydown', onPinEnterPress);
     mapPinMain.removeEventListener('mousedown', onPinMousePress);
-    mapPinMain.addEventListener('mousedown', function (evt) {
-      window.pinMain.onMouseDown(evt);
-    });
-    btnResetForm.addEventListener('click', window.form.resetForm);
+    btnResetForm.addEventListener('click', window.form.reset);
     avatarInput.addEventListener('change', window.image.onAvatarInputChange);
     photoInput.addEventListener('change', window.image.onPhotoInputChange);
   };
 
+  mapPinMain.addEventListener('mousedown', function (evt) {
+    window.pinMain.onMouseDown(evt);
+  });
+
   var onDebouncedUpdatePins = window.debounce(updatePins);
 
-  window.address.getAddress(mapPinMain);
+  window.address(mapPinMain);
 
-  formAddress.value = window.address.getAddress(mapPinMain);
+  formAddress.value = window.address(mapPinMain);
 
   mapPinMain.addEventListener('mousedown', onPinMousePress);
 
   mapPinMain.addEventListener('keydown', onPinEnterPress);
 
-  return {
+  window.main = {
     onPinMousePress: onPinMousePress,
     onPinEnterPress: onPinEnterPress,
     onFormSubmit: onFormSubmit,
-    onDebouncedUpdatePins: onDebouncedUpdatePins
+    onDebouncedUpdatePins: onDebouncedUpdatePins,
+    KeyCode: KeyCode,
+    map: map,
+    mapPinMain: mapPinMain
   };
 })();

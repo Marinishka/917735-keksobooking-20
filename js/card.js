@@ -1,6 +1,6 @@
 'use strict';
 
-window.card = (function () {
+(function () {
   var typeToTypeInCard = {
     'flat': 'Квартира',
     'bungalo': 'Бунгало',
@@ -8,7 +8,6 @@ window.card = (function () {
     'palace': 'Дворец'
   };
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
-  var map = document.querySelector('.map');
 
   var getCapacityOffer = function (rooms, guests) {
     var roomsText = '';
@@ -32,10 +31,10 @@ window.card = (function () {
 
   var closeEscapePress = function (evt) {
     deactivatePin();
-    var activeCardOfAd = map.querySelector('.map__card');
-    if (evt.key === 'Escape') {
+    var activeCardOfAd = window.main.map.querySelector('.map__card');
+    if (evt.key === window.main.KeyCode.ESCAPE) {
       if (activeCardOfAd) {
-        map.removeChild(activeCardOfAd);
+        window.main.map.removeChild(activeCardOfAd);
       }
       document.removeEventListener('keydown', closeEscapePress);
     }
@@ -48,8 +47,9 @@ window.card = (function () {
     }
   };
 
-  return {
-    createCard: function (ad) {
+  window.card = {
+    create: function (ad) {
+      var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
       var cardOfAd = cardTemplate.cloneNode(true);
       var titleOfAd = cardOfAd.querySelector('.popup__title');
       var addressOfLodging = cardOfAd.querySelector('.popup__text--address');
@@ -77,9 +77,9 @@ window.card = (function () {
       if (ad.offer.features.length === 0) {
         featuresOfLodging.style = 'display: none';
       } else {
-        for (var j = 0; j < window.data.FEATURES.length; j++) {
-          if (!ad.offer.features.includes(window.data.FEATURES[j])) {
-            var removeFeature = featuresOfLodging.querySelector('.popup__feature--' + window.data.FEATURES[j]);
+        for (var j = 0; j < FEATURES.length; j++) {
+          if (!ad.offer.features.includes(FEATURES[j])) {
+            var removeFeature = featuresOfLodging.querySelector('.popup__feature--' + FEATURES[j]);
             removeFeature.remove();
           }
         }
@@ -101,14 +101,14 @@ window.card = (function () {
 
       closeButton.addEventListener('mousedown', function () {
         deactivatePin();
-        map.removeChild(cardOfAd);
+        window.main.map.removeChild(cardOfAd);
         document.removeEventListener('keydown', closeEscapePress);
       });
 
       closeButton.addEventListener('keydown', function (evt) {
         deactivatePin();
-        if (evt.key === 'Enter') {
-          map.removeChild(cardOfAd);
+        if (evt.key === window.main.KeyCode.ENTER) {
+          window.main.map.removeChild(cardOfAd);
         }
         document.removeEventListener('keydown', closeEscapePress);
       });
