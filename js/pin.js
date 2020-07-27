@@ -59,6 +59,7 @@
         fragment.appendChild(pinOnMap);
       }
       mapPins.appendChild(fragment);
-    }
+    },
+    MAX_QUANTITY_ADS: MAX_QUANTITY_ADS
   };
 })();

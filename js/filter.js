@@ -47,14 +47,18 @@
   };
 
   window.filter = {
-    getFilteredAds: function (loadedAds) {
+    getAds: function (loadedAds) {
       return loadedAds.slice().filter(function (ad) {
-        return filterType(ad.offer.type)
+        if (this.count < window.pin.MAX_QUANTITY_ADS && filterType(ad.offer.type)
         && filterPrice(ad.offer.price)
           && filterRooms(ad.offer.rooms)
           && filterGuests(ad.offer.guests)
-          && filterFeatures(ad.offer.features);
-      });
+          && filterFeatures(ad.offer.features)) {
+          this.count++;
+          return true;
+        }
+        return false;
+      }, {count: 0});
     }
   };
 })();

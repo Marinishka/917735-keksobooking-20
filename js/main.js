@@ -10,7 +10,7 @@
   var adForm = document.querySelector('.ad-form');
   var formAddress = adForm.querySelector('#address');
   var formFieldsets = adForm.children;
-  var mapFilters = document.querySelector('.map__filters');
+  var mapFilters = map.querySelector('.map__filters');
   var mapFiltersElements = mapFilters.children;
   var btnResetForm = adForm.querySelector('.ad-form__reset');
   var msgPopupSuccessTemplate = document.querySelector('#success').content.querySelector('.success');
@@ -92,7 +92,7 @@
 
   var updatePins = function () {
     window.removeActivePinsAndCard();
-    window.pin.create(window.filter.getFilteredAds(loadedAds));
+    window.pin.create(window.filter.getAds(loadedAds));
   };
 
   var activateStatus = function () {
