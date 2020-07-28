@@ -81,8 +81,8 @@
 
   adType.addEventListener('change', function () {
     var minPrice = typeToMinPrice[adType.value];
-    adPrice.setAttribute('min', minPrice);
-    adPrice.setAttribute('placeholder', minPrice);
+    adPrice.min = minPrice;
+    adPrice.placeholder = minPrice;
   });
 
   adTimeIn.addEventListener('change', function () {
@@ -94,15 +94,14 @@
   });
 
   var disableElements = function (arr) {
-    for (var i = 0; i < arr.length; i++) {
-      arr[i].setAttribute('disabled', 'disabled');
-    }
+    Array.from(arr).forEach(function (it) {
+      it.disabled = true;
+    });
   };
 
   var resetForm = function () {
     var photoPreviewImg = document.querySelector('.ad-form__photo img');
     disableElements(formFieldsets);
-    disableElements(mapFiltersElements);
     adForm.classList.add('ad-form--disabled');
     window.main.map.classList.add('map--faded');
     document.querySelectorAll('.map__pin').forEach(function (pin) {
@@ -110,11 +109,12 @@
         pin.remove();
       }
     });
-    adPrice.setAttribute('min', '1000');
-    adPrice.setAttribute('placeholder', '1000');
     window.main.mapPinMain.style.left = InitialStatePin.LEFT;
     window.main.mapPinMain.style.top = InitialStatePin.TOP;
     adForm.reset();
+    var minPriceReset = typeToMinPrice[adType.value];
+    adPrice.min = minPriceReset;
+    adPrice.placeholder = minPriceReset;
     formAddress.value = window.address(window.main.mapPinMain);
     var cardOnMap = window.main.map.querySelector('.map__card');
     if (cardOnMap) {
@@ -145,7 +145,7 @@
   window.form = {
     enableElements: function (arr) {
       for (var i = 0; i < arr.length; i++) {
-        arr[i].removeAttribute('disabled');
+        arr[i].disabled = false;
       }
     },
     disableElements: disableElements,

@@ -40,7 +40,6 @@
 
   var filterFeatures = function (features) {
     var checkedFeatures = mapFiltersContainer.querySelectorAll('input:checked');
-
     return Array.from(checkedFeatures).every(function (feature) {
       return features.includes(feature.value);
     });
@@ -48,17 +47,20 @@
 
   window.filter = {
     getAds: function (loadedAds) {
-      return loadedAds.slice().filter(function (ad) {
-        if (this.count < window.pin.MAX_QUANTITY_ADS && filterType(ad.offer.type)
-        && filterPrice(ad.offer.price)
-          && filterRooms(ad.offer.rooms)
-          && filterGuests(ad.offer.guests)
-          && filterFeatures(ad.offer.features)) {
-          this.count++;
-          return true;
+      var ads = [];
+      for (var i = 0; i < loadedAds.length; i++) {
+        if (filterType(loadedAds[i].offer.type)
+          && filterPrice(loadedAds[i].offer.price)
+            && filterRooms(loadedAds[i].offer.rooms)
+            && filterGuests(loadedAds[i].offer.guests)
+            && filterFeatures(loadedAds[i].offer.features)) {
+          ads.push(loadedAds[i]);
+          if (ads.length === window.pin.MAX_QUANTITY_ADS) {
+            break;
+          }
         }
-        return false;
-      }, {count: 0});
+      }
+      return ads;
     }
   };
 })();
